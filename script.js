@@ -184,7 +184,7 @@ function main() {
 
     // Top point data (vertex and color)
     const topPointVertex = [
-         0.0,  0.3    
+         0.0,  0.3
     ];
     const topPointColor = [
         0.6, 0.8, 1.0, 1.0  
@@ -206,6 +206,5 @@ function main() {
     const bottomPointsColorBuffer = createBuffer(gl, bottomPointsColors);
     drawShape(gl, program, bottomPointsBuffer, bottomPointsColorBuffer, 2, gl.POINTS, 10.0);
 }
-
 
 main();
