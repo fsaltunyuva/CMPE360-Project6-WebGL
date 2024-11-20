@@ -1,15 +1,10 @@
-// Initialize WebGL context and get the canvas
+
 function initializeWebGL(canvasId) {
     const canvas = document.getElementById(canvasId);
-    const gl = canvas.getContext("webgl2"); 
-    if (!gl) {
-        console.error("WebGL 2 is not supported");
-        return null;
-    }
+    const gl = canvas.getContext("webgl2");
     return gl;
 }
 
-// Compile and link shaders to create a WebGL program
 function initShaders(gl, vertexShaderSource, fragmentShaderSource) {
     const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -18,34 +13,21 @@ function initShaders(gl, vertexShaderSource, fragmentShaderSource) {
     return program;
 }
 
-// Compile individual shaders (vertex or fragment)
 function compileShader(gl, type, source) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error("Shader compile failed:", gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-    }
     return shader;
 }
 
-// Link vertex and fragment shaders into a program
 function createProgram(gl, vertexShader, fragmentShader) {
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error("Program link failed:", gl.getProgramInfoLog(program));
-        gl.deleteProgram(program);
-        return null;
-    }
     return program;
 }
 
-// Create a buffer and load data into it
 function createBuffer(gl, data) {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -53,9 +35,7 @@ function createBuffer(gl, data) {
     return buffer;
 }
 
-// Draw shapes using position and color buffers
 function drawShape(gl, program, buffer, colorBuffer, count, mode, pointSize, lineWidth) {
-    // Set position attribute
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     const positionLocation = gl.getAttribLocation(program, "a_position");
     gl.enableVertexAttribArray(positionLocation);
@@ -67,7 +47,7 @@ function drawShape(gl, program, buffer, colorBuffer, count, mode, pointSize, lin
     gl.enableVertexAttribArray(colorLocation);
     gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
 
-    // Set point size (for POINTS mode only)
+    // Set point size (iii. Part)
     const pointSizeLocation = gl.getUniformLocation(program, "u_pointSize");
     gl.uniform1f(pointSizeLocation, pointSize);
 
@@ -75,20 +55,17 @@ function drawShape(gl, program, buffer, colorBuffer, count, mode, pointSize, lin
     if (mode === gl.LINES || mode === gl.LINE_LOOP || mode === gl.LINE_STRIP) {
         gl.lineWidth(lineWidth);
     }
-
-    // Draw the shape
+    
     gl.drawArrays(mode, 0, count);
 }
 
-// Main program execution
 function main() {
     const gl = initializeWebGL("webgl-canvas");
     if (!gl) return;
 
     gl.clearColor(0.78, 0.64, 0.78, 1.0); // Set background color
     gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // Define vertex and fragment shader source codes
+    
     const vertexShaderSource = `#version 300 es
         in vec2 a_position;
         in vec4 a_color;
@@ -96,9 +73,9 @@ function main() {
         out vec4 v_color;
 
         void main() {
-            gl_PointSize = u_pointSize; // Set the size of points
-            gl_Position = vec4(a_position, 0.0, 1.0); // Set position of vertex
-            v_color = a_color; // Pass color to fragment shader
+            gl_PointSize = u_pointSize; 
+            gl_Position = vec4(a_position, 0.0, 1.0); 
+            v_color = a_color; 
         }
     `;
     const fragmentShaderSource = `#version 300 es
@@ -107,13 +84,13 @@ function main() {
         out vec4 fragColor;
 
         void main() {
-            fragColor = v_color; // Set color output for each fragment
+            fragColor = v_color; 
         }
     `;
 
     const program = initShaders(gl, vertexShaderSource, fragmentShaderSource);
 
-    // Triangle data (vertices and colors)
+    // Triangle data 
     const triangleVertices = [
          0.0,  0.3,  
         -0.3, -0.3,   
@@ -128,7 +105,7 @@ function main() {
     const triangleColorBuffer = createBuffer(gl, triangleColors);
     drawShape(gl, program, triangleBuffer, triangleColorBuffer, 3, gl.TRIANGLES, 10.0);
 
-    // Thin lines data (vertices and colors)
+    // Thin lines data 
     const thinLineVertices = [
         // Left eye of the face
         -0.4,  0.3,
@@ -182,7 +159,7 @@ function main() {
        We tried this on Windows 11 and RTX3070 GPU.
     */
 
-    // Top point data (vertex and color)
+    // Top point data 
     const topPointVertex = [
          0.0,  0.3
     ];
@@ -191,9 +168,9 @@ function main() {
     ];
     const topPointBuffer = createBuffer(gl, topPointVertex);
     const topPointColorBuffer = createBuffer(gl, topPointColor);
-    drawShape(gl, program, topPointBuffer, topPointColorBuffer, 1, gl.POINTS, 15.0);
+    drawShape(gl, program, topPointBuffer, topPointColorBuffer, 1, gl.POINTS, 15.0); // Point with size 15.0 (iii. Part)
 
-    // Bottom points data (vertices and colors)
+    // Bottom points data 
     const bottomPointsVertices = [
         -0.3, -0.3,  
          0.3, -0.3   
@@ -204,7 +181,7 @@ function main() {
     ];
     const bottomPointsBuffer = createBuffer(gl, bottomPointsVertices);
     const bottomPointsColorBuffer = createBuffer(gl, bottomPointsColors);
-    drawShape(gl, program, bottomPointsBuffer, bottomPointsColorBuffer, 2, gl.POINTS, 10.0);
+    drawShape(gl, program, bottomPointsBuffer, bottomPointsColorBuffer, 2, gl.POINTS, 10.0); // Points with size 10.0 (iii. Part)
 }
 
 main();
